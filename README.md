@@ -1,161 +1,147 @@
 # German Electricity Demand Forecasting
 
-**Student:** Avusali Mani Harshith  
-**Student ID:** 24005856  
+**Author:** Avusali Mani Harshith  
+**Student ID:** 24005856
 
-A reproducible time-series forecasting study of German electricity demand using statistical benchmarks, SARIMA/SARIMAX, feature-based machine learning, and an hourly Long Short-Term Memory (LSTM) neural network.
+## Overview
 
----
+This repository contains a reproducible forecasting workflow for German electricity demand. The analysis uses hourly electricity-load data from Open Power System Data and historical Berlin temperature data from Open-Meteo.
 
-## Project overview
+The project evaluates statistical benchmarks, seasonal time-series models, feature-based machine-learning models, and an hourly Long Short-Term Memory network.
 
-This project models German electricity demand from **1 January 2015 to September 2020** using the publicly available Open Power System Data time-series dataset. It evaluates several forecasting approaches under clearly separated forecast protocols:
+## Objectives
 
-- fixed-origin two-year weekly forecasting;
-- rolling one-week-ahead weekly forecasting;
-- rolling one-hour-ahead hourly forecasting;
-- conditional forecasting using observed future temperature.
+The workflow is designed to:
 
-The workflow includes data validation, exploratory analysis, stationarity testing, benchmark forecasting, exhaustive SARIMA parameter search, residual diagnostics, uncertainty intervals, exogenous regressors, feature engineering, time-series cross-validation, recursive forecasting, LSTM tuning, statistical comparison, and robustness analysis.
+- prepare and validate German electricity-demand data;
+- examine trend, seasonality and stationarity;
+- compare benchmark forecasting methods;
+- build and diagnose SARIMA and SARIMAX models;
+- evaluate temperature and holiday variables;
+- train Random Forest and Gradient Boosting regressors;
+- train and tune an hourly LSTM network;
+- compare models using consistent forecast protocols and evaluation metrics;
+- export plots, predictions, diagnostics and metric tables.
 
-> **Important:** Results from different forecast protocols are reported separately and should not be compared as though they were produced under the same information set or forecast horizon.
+## Data sources
 
----
+### Electricity demand
 
-## Assignment coverage
+- **Provider:** Open Power System Data
+- **Dataset:** `time_series_60min_singleindex.csv`
+- **Target column:** `DE_load_actual_entsoe_transparency`
+- **Analysis period:** January 2015 to September 2020
 
-The notebook implements all required modelling components:
+The notebook downloads the official file automatically when a complete local copy is not available.
 
-- Data download, validation, cleaning and aggregation
-- Hourly, daily and weekly time-series preparation
-- Exploratory data analysis and seasonal decomposition
-- ADF and KPSS stationarity tests
-- ACF, PACF and differencing analysis
-- Mean, naive, seasonal-naive and drift benchmarks
-- Exhaustive SARIMA search over:
-  - `p = 0, ..., 6`
-  - `d = 0, 1, 2`
-  - `q = 0, ..., 6`
-- SARIMA validation, residual diagnostics and confidence intervals
-- SARIMAX models using Berlin temperature and German public holidays
-- Random Forest and Gradient Boosting regression
-- Leakage-safe lag and rolling-window features
-- Recursive fixed-origin feature-based forecasting
-- Hourly LSTM feature, lookback, architecture and hyperparameter experiments
-- RMSE, MAE, sMAPE, MASE and R² evaluation
-- Protocol-matched Diebold-Mariano testing
-- Robustness and operational decision-support analysis
+### Temperature
 
----
+Historical Berlin temperature data are retrieved from the Open-Meteo archive API.
 
-## Dataset
+### Holidays
 
-**Source:** Open Power System Data  
-**File:** `time_series_60min_singleindex.csv`  
-**Official URL:**  
-https://data.open-power-system-data.org/time_series/2020-10-06/time_series_60min_singleindex.csv
+German public-holiday variables are generated with the `holidays` Python package.
 
-**Target variable:**  
-`DE_load_actual_entsoe_transparency`
+## Forecasting methods
 
-The notebook automatically downloads the official dataset if a complete local copy is not available. The raw CSV is intentionally excluded from version control because it is large and can be reproduced from the official source.
+### Benchmarks
 
-Berlin temperature data are retrieved from the Open-Meteo historical archive API. German public-holiday variables are generated using the `holidays` Python package.
+- Mean
+- Naive
+- Seasonal naive
+- Drift
 
----
-
-## Forecasting models
-
-### Statistical benchmarks
-
-- Mean forecast
-- Naive forecast
-- Seasonal-naive forecast
-- Drift forecast
-
-### Statistical time-series models
+### Statistical models
 
 - SARIMA
-- SARIMAX with Berlin temperature
-- SARIMAX with German holiday count
+- SARIMAX with temperature
+- SARIMAX with holiday count
 - SARIMAX with temperature and holiday count
 
-### Feature-based machine learning
+### Machine-learning models
 
 - Random Forest Regressor
 - Gradient Boosting Regressor
 
-### Deep learning
+### Neural-network model
 
 - Hourly LSTM
-- Feature-set ablation
+- Feature-group comparison
 - Lookback-window comparison
 - Architecture comparison
-- Units, dropout and learning-rate refinement
+- Units, dropout and learning-rate tuning
 - Early stopping and model checkpointing
-
----
 
 ## Forecast protocols
 
-### Fixed-origin weekly forecast
+The notebook reports results separately for:
 
-The final two years are forecast from one origin at the end of the training period. No actual test-period demand is supplied to recursive operational models.
+- a single-origin, multi-step weekly forecast over the two-year holdout;
+- rolling one-week-ahead weekly forecasts;
+- rolling one-hour-ahead hourly forecasts;
+- conditional forecasts that use observed temperature from the evaluation period.
 
-### Rolling weekly forecast
+Results from different protocols are not combined into one ranking because their forecast horizons and information sets differ.
 
-Each test week is forecast using information available up to the previous week. This protocol is used for one-step-ahead weekly comparisons.
+## Evaluation
 
-### Rolling hourly forecast
+The notebook calculates:
 
-The LSTM predicts each test hour using the immediately preceding observed sequence. It is compared with hourly persistence and hourly seasonal-naive benchmarks under the same forecast protocol.
+- Root Mean Squared Error
+- Mean Absolute Error
+- Symmetric Mean Absolute Percentage Error
+- Mean Absolute Scaled Error
+- Coefficient of Determination
 
-### Conditional temperature forecast
+It also includes:
 
-Models using observed future test-period temperature are explicitly labelled **conditional forecasts**. They are not presented as fully operational forecasts because future observed temperature is unavailable at the original forecast origin.
+- residual diagnostics;
+- forecast intervals;
+- interval coverage;
+- Diebold-Mariano comparisons for compatible rolling forecasts;
+- seasonal, holiday and temperature-group robustness analysis.
 
----
+## Primary environment
 
-## Key results from the executed notebook
+The notebook was developed and executed in **Kaggle**.
 
-### Fixed-origin weekly evaluation
+Recommended Kaggle settings:
 
-| Model | RMSE |
-|---|---:|
-| Seasonal Naive | **2965.41** |
-| Recursive Gradient Boosting | 3285.93 |
-| SARIMAX: Holiday Count | 4184.78 |
-| SARIMA | 4197.03 |
-| Mean | 4380.97 |
-| Naive | 4583.43 |
-| Drift | 4652.82 |
+- Internet access enabled
+- GPU accelerator enabled for LSTM training
+- standard CPU resources for SARIMA, SARIMAX and scikit-learn models
 
-The seasonal-naive model provides the strongest fixed-origin two-year weekly result.
+### Run in Kaggle
 
-### Rolling weekly evaluation
+1. Create or open a Kaggle Notebook.
+2. Upload `24005856_German_Electricity_Forecasting.ipynb`.
+3. Enable Internet access.
+4. Enable a GPU accelerator.
+5. Restart the session.
+6. Run all cells from the beginning.
+7. Review the generated files in the `results` directory.
 
-| Model | RMSE |
-|---|---:|
-| Gradient Boosting: Demand and Holidays | **2519.82** |
-| Rolling Seasonal Naive | 2616.62 |
-| Gradient Boosting: Demand Only | 2664.82 |
-| Random Forest | 2679.75 |
+The full workflow can take considerable time because it includes an exhaustive SARIMA search and multiple LSTM experiments.
 
-The strongest rolling feature ablation improves RMSE over rolling seasonal naive by approximately **3.70%**. The associated Diebold-Mariano result is not statistically significant at the 5% level (`p ≈ 0.359`), so the improvement is interpreted cautiously.
+## Alternative environments
 
-### Rolling hourly evaluation
+The notebook can also run in:
 
-| Model | RMSE |
-|---|---:|
-| LSTM | **1347.52** |
-| Persistence Naive | 2489.99 |
-| Hourly Seasonal Naive | 4287.13 |
+- Google Colab with Internet access;
+- JupyterLab on a local computer with the required Python packages.
 
-The LSTM substantially outperforms both hourly benchmarks under the same rolling one-hour-ahead protocol.
+Install the dependencies with:
 
-> Exact figures, additional metrics, diagnostics and uncertainty results are available in the executed notebook and generated CSV tables.
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
 
----
+Then open the notebook in JupyterLab:
+
+```bash
+jupyter lab
+```
 
 ## Repository structure
 
@@ -167,146 +153,73 @@ german-electricity-demand-forecasting/
 ├── .gitignore
 └── results/
     ├── figures/
-    └── tables/
+    ├── tables/
+    ├── models/
+    │   └── .gitkeep
+    ├── hourly_german_load.csv
+    ├── daily_german_load.csv
+    ├── weekly_german_load.csv
+    ├── berlin_daily_temperature.csv
+    ├── berlin_hourly_temperature.csv
+    └── weekly_temperature_holidays.csv
 ```
 
-Generated model files are stored locally under `results/models/` but are excluded from Git by default because trained neural-network files can be large. They can be reproduced by running the notebook.
+## Generated outputs
 
----
+### `results/figures`
 
-## Installation
+Contains visual outputs for:
 
-### Recommended environments
+- hourly, daily and weekly demand;
+- calendar demand patterns;
+- seasonal decomposition;
+- stationarity transformations;
+- ACF and PACF;
+- benchmark forecasts;
+- SARIMA diagnostics and forecasts;
+- SARIMAX comparisons;
+- machine-learning forecasts and importance;
+- LSTM training and forecasts;
+- weekly model comparisons.
 
-- Kaggle Notebook with Internet enabled
-- Google Colab with Internet enabled
-- Local Jupyter environment with Python 3.10 or 3.11
+### `results/tables`
 
-A GPU is recommended for LSTM training. SARIMA, SARIMAX and scikit-learn models primarily use the CPU.
+Contains CSV outputs for:
 
-### Local setup
+- data-quality summaries;
+- descriptive statistics;
+- stationarity tests;
+- benchmark predictions and metrics;
+- SARIMA search and validation;
+- SARIMA diagnostics and intervals;
+- SARIMAX coefficients, predictions and metrics;
+- machine-learning tuning and feature comparisons;
+- LSTM experiments, predictions and metrics;
+- statistical comparisons;
+- robustness analysis;
+- operational decision support.
 
-```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
-cd german-electricity-demand-forecasting
+### `results/models`
 
-python -m venv .venv
-```
+Contains model artefacts produced during execution. Large model files are excluded from Git tracking because they can be recreated by running the notebook.
 
-Activate the environment:
+## Reproducibility controls
 
-**Windows**
+The notebook uses:
 
-```bash
-.venv\Scripts\activate
-```
+- a constant random seed;
+- chronological train, validation and test partitions;
+- training-only scaling;
+- time-series cross-validation;
+- lagged and rolling features based only on earlier observations;
+- recursive prediction for long weekly forecast paths;
+- separate reporting for different forecast protocols;
+- explicit labelling of temperature-based conditional forecasts;
+- automated validation of forecast coverage, convergence and output generation.
 
-**macOS/Linux**
+## Notes
 
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-Launch Jupyter:
-
-```bash
-jupyter lab
-```
-
-Open `24005856_German_Electricity_Forecasting.ipynb` and run all cells sequentially.
-
----
-
-## Reproduction procedure
-
-1. Enable Internet access.
-2. Enable a GPU accelerator where available.
-3. Open the final notebook.
-4. Select **Restart Session and Run All**.
-5. Allow the notebook to download and validate the official electricity dataset.
-6. Allow all SARIMA candidates and LSTM experiments to finish.
-7. Confirm the final submission-check table contains only `True`.
-8. Confirm the notebook prints:
-
-```text
-All executable submission checks passed.
-```
-
-9. Review generated artefacts under `results/`.
-
-A complete run may take approximately one to three hours depending on CPU speed, SARIMA convergence and GPU availability.
-
----
-
-## Main generated outputs
-
-### Tables
-
-- `fixed_origin_weekly_metrics.csv`
-- `rolling_weekly_metrics.csv`
-- `hourly_lstm_metrics.csv`
-- `sarima_required_grid_results.csv`
-- `sarima_shortlist_validation.csv`
-- `protocol_matched_diebold_mariano_tests.csv`
-- `fixed_origin_robustness_error_analysis.csv`
-- `operational_decision_support.csv`
-- `submission_checks.csv`
-
-### Figures
-
-- Fixed-origin benchmark forecasts
-- SARIMA and SARIMAX forecasts
-- Residual diagnostics
-- Feature-model comparisons
-- Rolling weekly comparison
-- LSTM training history
-- Full two-year LSTM forecast
-- Final fixed-origin and rolling comparison figures
-
----
-
-## Reproducibility and leakage controls
-
-The implementation uses:
-
-- a fixed random seed of `42`;
-- chronological training, validation and test splits;
-- training-only feature scaling;
-- time-series cross-validation rather than random cross-validation;
-- lagged and rolling demand features constructed from earlier observations only;
-- recursive prediction for fixed-origin feature-based forecasts;
-- separate reporting of fixed-origin and rolling protocols;
-- explicit conditional labelling where observed future temperature is used;
-- final executable checks for forecast coverage, convergence, finite metrics and output creation.
-
----
-
-## Limitations
-
-- Observed future temperature creates a conditional rather than fully operational forecast.
-- The selected SARIMA specification may exhibit over-differencing risk despite validation-based selection.
-- Long-horizon SARIMA/SARIMAX uncertainty intervals show undercoverage.
-- The strongest rolling feature ablation was identified after reviewing held-out ablation results and is therefore interpreted as post-hoc evidence.
-- Forecast performance is based on one German national demand series and one representative temperature location.
-
----
-
-## Academic-use note
-
-This repository supports the accompanying assessed report. The report contains the literature review, critical interpretation, answers to the assignment questions, model recommendation, limitations and future-work discussion.
-
-The notebook, report and repository should be submitted in accordance with the university's academic-integrity and assessment regulations.
-
----
-
-## Author
-
-**Avusali Mani Harshith**  
-**Student ID:** 24005856
+- The raw electricity dataset is not stored in this repository because the notebook downloads it from the official source.
+- Observed temperature from the evaluation period is used only in analyses labelled as conditional.
+- The `results` directory is regenerated when the notebook is executed.
+- The notebook should be run sequentially from the first cell to preserve reproducibility.
