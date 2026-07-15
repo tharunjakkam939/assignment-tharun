@@ -19,7 +19,7 @@ The central question is whether increasingly complex forecasting methods provide
 
 - **Electricity source:** Open Power System Data, 60-minute single-index time-series package.
 - **Target variable:** `DE_load_actual_entsoe_transparency`.
-- **Study period:** 1 January 2015 to September 2020.
+- **Study period:** 1 January 2015 to 30 September 2020.
 - **Exogenous weather:** Berlin temperature from the Open-Meteo Historical Weather API.
 - **Calendar information:** German public-holiday indicators.
 - **Frequencies used:** hourly, daily and complete weekly aggregates.
@@ -139,7 +139,7 @@ The operational recommendation depends on the forecast horizon:
 The repository contains everything needed to inspect the submitted analysis and reproduce the reported findings:
 
 - the complete executed notebook with saved outputs;
-- all final figures used to support the report;
+- all report figures and their underlying notebook-generated source plots;
 - the exact composite used as Report Figure 5;
 - the final model-comparison metrics table;
 - the aligned report;
@@ -154,7 +154,7 @@ The following generated artifacts are intentionally not committed:
 - every exploratory or intermediate CSV table produced during development;
 - large trained `.keras` and `.joblib` model binaries.
 
-These files are not required to verify the submitted report because the notebook downloads the public data, rebuilds the processed datasets, retrains the models and regenerates the intermediate tables and model files. Excluding large generated artifacts keeps the repository reviewable and avoids unnecessary duplication. The final figures and numerical results cited in the report are included.
+These files are not required to inspect the submitted findings because the notebook contains the complete code needed to download the public data, rebuild the processed datasets, retrain the models and regenerate the intermediate tables and model files. Excluding large generated artifacts keeps the repository reviewable and avoids unnecessary duplication. The final figures and numerical results cited in the report are included.
 
 For archival use, large generated outputs may be attached separately as a GitHub Release or supplementary submission without changing the repository code.
 
@@ -213,7 +213,7 @@ Internet access is required for the first data download. A complete rerun may ta
 
 The notebook was executed end-to-end in Kaggle before export. The final validation cell reported that all 48 executable checks passed.
 
-Kaggle retained the cell outputs in the downloaded notebook but omitted the stored `execution_count` values. GitHub or Jupyter may therefore show `[ ]` beside code cells even though the outputs are present. This is an export-format artefact. Execution counters were not manually fabricated.
+The exported notebook contains all saved cell outputs, but its stored `execution_count` values are blank. GitHub or Jupyter may therefore show `[ ]` beside code cells even though the outputs are present. The successful Kaggle execution is documented separately through the final validation output and execution evidence. Execution counters were not manually fabricated.
 
 Kaggle run evidence is documented in [`docs/execution_evidence.md`](docs/execution_evidence.md).
 
